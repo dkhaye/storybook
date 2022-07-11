@@ -1,6 +1,6 @@
 import path from 'path';
 import { dedent } from 'ts-dedent';
-import type { Options } from '@storybook/core-common';
+import type { Options } from '../types';
 
 import { getInterpretedFile } from './interpret-files';
 
