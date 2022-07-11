@@ -5,6 +5,7 @@ import { logger } from '@storybook/node-logger';
 import { useProgressReporting } from '@storybook/core-common';
 import type { Builder, Options } from '@storybook/core-common';
 import { checkWebpackVersion } from '@storybook/core-webpack';
+import { createWebpackConfig } from './utils/webpack';
 
 export * from './types';
 
@@ -39,20 +40,14 @@ export const executor = {
 
 export const getConfig: WebpackBuilder['getConfig'] = async (options) => {
   const { presets } = options;
-  const typescriptOptions = await presets.apply('typescript', {}, options);
-  const babelOptions = await presets.apply('babel', {}, { ...options, typescriptOptions });
-  const framework = await presets.apply<any>('framework', {}, options);
 
-  return presets.apply(
-    'webpack',
-    {},
-    {
-      ...options,
-      babelOptions,
-      typescriptOptions,
-      frameworkOptions: typeof framework === 'string' ? {} : framework?.options,
-    }
-  ) as any;
+  const base = await createWebpackConfig(options);
+  const intermediate = await presets.apply<Configuration>('webpack', base);
+
+  const out = await presets.apply<Configuration>('webpackFinal', intermediate);
+
+  console.log(out);
+  return out;
 };
 
 let asyncIterator: ReturnType<StarterFunction> | ReturnType<BuilderFunction>;
@@ -262,5 +257,5 @@ export const build = async (options: BuilderStartOptions) => {
   return result.value;
 };
 
-export const corePresets = [require.resolve('./presets/preview-preset.js')];
-export const overridePresets = [require.resolve('./presets/custom-webpack-preset.js')];
+export const corePresets: string[] = [require.resolve('./presets/preview-preset.js')];
+export const overridePresets: string[] = [];

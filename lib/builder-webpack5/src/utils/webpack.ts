@@ -9,7 +9,7 @@ import TerserWebpackPlugin from 'terser-webpack-plugin';
 import VirtualModulePlugin from 'webpack-virtual-modules';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
-import type { Options, CoreConfig } from '@storybook/core-common';
+import type { Options, CoreConfig, StorybookConfig } from '@storybook/core-common';
 import {
   stringifyProcessEnvs,
   handlebars,
@@ -20,7 +20,7 @@ import {
 } from '@storybook/core-common';
 import { toRequireContextString, toImportFn } from '@storybook/core-webpack';
 import type { BuilderOptions, TypescriptOptions } from '../types';
-import { createBabelLoader } from './babel-loader-preview';
+import { createBabelLoader } from './babel';
 
 const storybookPaths: Record<string, string> = {
   global: path.dirname(require.resolve(`global/package.json`)),
@@ -50,9 +50,7 @@ const storybookPaths: Record<string, string> = {
   ),
 };
 
-export default async (
-  options: Options & Record<string, any> & { typescriptOptions: TypescriptOptions }
-): Promise<Configuration> => {
+export const createWebpackConfig = async (options: Options): Promise<Configuration> => {
   const {
     outputDir = path.join('.', 'public'),
     quiet,
@@ -60,9 +58,6 @@ export default async (
     configType,
     presets,
     previewUrl,
-    babelOptions,
-    typescriptOptions,
-    features,
     serverChannelUrl,
   } = options;
 
@@ -75,32 +70,35 @@ export default async (
     `);
   }
   const frameworkName = typeof framework === 'string' ? framework : framework.name;
-  const frameworkOptions = await presets.apply('frameworkOptions');
+  const frameworkOptions = presets.apply('frameworkOptions');
 
   const isProd = configType === 'PRODUCTION';
-  const envs = await presets.apply<Record<string, string>>('env');
-  const logLevel = await presets.apply('logLevel', undefined);
+  const envs = presets.apply<Record<string, string>>('env');
+  const logLevel = presets.apply<string>('logLevel');
+  const features = options.presets.apply<StorybookConfig['features']>('features');
+  const headHtmlSnippet = presets.apply<string>('previewHead');
+  const bodyHtmlSnippet = presets.apply<string>('previewBody');
+  const template = presets.apply<string>('previewMainTemplate');
+  const config = presets.apply<string[]>('config', []);
+  const entry = presets.apply<string[]>('entries', []);
+  const story = presets.apply('stories', []);
 
-  const headHtmlSnippet = await presets.apply('previewHead');
-  const bodyHtmlSnippet = await presets.apply('previewBody');
-  const template = await presets.apply<string>('previewMainTemplate');
-  const coreOptions = await presets.apply<CoreConfig>('core');
-  const builderOptions: BuilderOptions =
-    typeof coreOptions.builder === 'string' ? {} : coreOptions.builder?.options || {};
+  const typescriptOptions = await options.presets.apply<TypescriptOptions>('typescript');
+  const babelOptions = await presets.apply('babel', {}, { ...options, typescriptOptions });
+  const { channelOptions, builder } = await presets.apply<CoreConfig>('core');
+  const builderOptions: BuilderOptions = typeof builder === 'string' ? {} : builder?.options || {};
 
-  const configs = [
-    ...(await presets.apply('config', [], options)),
-    loadPreviewOrConfigFile(options),
-  ].filter(Boolean);
-  const entries = (await presets.apply('entries', [], options)) as string[];
+  const configs = [...(await config), loadPreviewOrConfigFile(options)].filter(Boolean);
+  const entries = await entry;
   const workingDir = process.cwd();
-  const stories = normalizeStories(await presets.apply('stories', [], options), {
+  const stories = normalizeStories(await story, {
     configDir: options.configDir,
     workingDir,
   });
 
   const virtualModuleMapping: Record<string, string> = {};
-  if (features?.storyStoreV7) {
+
+  if ((await features)?.storyStoreV7) {
     const storiesFilename = 'storybook-stories.js';
     const storiesPath = path.resolve(path.join(workingDir, storiesFilename));
 
@@ -200,15 +198,15 @@ export default async (
         chunksSortMode: 'none' as any,
         alwaysWriteToDisk: true,
         inject: false,
-        template,
+        template: await template,
         templateParameters: {
           version: packageJson.version,
           globals: {
             CONFIG_TYPE: configType,
-            LOGLEVEL: logLevel,
-            FRAMEWORK_OPTIONS: frameworkOptions,
-            CHANNEL_OPTIONS: coreOptions.channelOptions,
-            FEATURES: features,
+            LOGLEVEL: await logLevel,
+            FRAMEWORK_OPTIONS: await frameworkOptions,
+            CHANNEL_OPTIONS: channelOptions,
+            FEATURES: await features,
             PREVIEW_URL: previewUrl,
             STORIES: stories.map((specifier) => ({
               ...specifier,
@@ -216,8 +214,8 @@ export default async (
             })),
             SERVER_CHANNEL_URL: serverChannelUrl,
           },
-          headHtmlSnippet,
-          bodyHtmlSnippet,
+          headHtmlSnippet: await headHtmlSnippet,
+          bodyHtmlSnippet: await bodyHtmlSnippet,
         },
         minify: {
           collapseWhitespace: true,
@@ -229,7 +227,7 @@ export default async (
         },
       }),
       new DefinePlugin({
-        ...stringifyProcessEnvs(envs),
+        ...stringifyProcessEnvs(await envs),
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
       }),
       new ProvidePlugin({ process: require.resolve('process/browser.js') }),
@@ -241,6 +239,42 @@ export default async (
     module: {
       rules: [
         {
+          test: /\.css$/,
+          sideEffects: true,
+          use: [
+            require.resolve('style-loader'),
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                importLoaders: 1,
+              },
+            },
+          ],
+        },
+        {
+          test: /\.(svg|ico|jpg|jpeg|png|apng|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)(\?.*)?$/,
+          type: 'asset/resource',
+          generator: {
+            filename: isProd
+              ? 'static/media/[name].[contenthash:8][ext]'
+              : 'static/media/[path][name][ext]',
+          },
+        },
+        {
+          test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)(\?.*)?$/,
+          type: 'asset',
+          parser: {
+            dataUrlCondition: {
+              maxSize: 10000,
+            },
+          },
+          generator: {
+            filename: isProd
+              ? 'static/media/[name].[contenthash:8][ext]'
+              : 'static/media/[path][name][ext]',
+          },
+        },
+        {
           test: /\.m?js$/,
           type: 'javascript/auto',
         },
@@ -250,24 +284,29 @@ export default async (
             fullySpecified: false,
           },
         },
-        createBabelLoader(babelOptions, typescriptOptions),
         {
           test: /\.md$/,
           type: 'asset/source',
         },
+        createBabelLoader(babelOptions, typescriptOptions),
       ],
     },
     resolve: {
       extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.cjs'],
-      modules: ['node_modules'].concat(envs.NODE_PATH || []),
+      modules: ['node_modules'].concat((await envs).NODE_PATH || []),
       mainFields: ['browser', 'module', 'main'].filter(Boolean),
       alias: storybookPaths,
       fallback: {
         path: require.resolve('path-browserify'),
         assert: require.resolve('browser-assert'),
         util: require.resolve('util'),
+        crypto: false,
       },
     },
+    ...(builderOptions.fsCache ? { cache: { type: 'filesystem' as const } } : {}),
+    experiments:
+      builderOptions.lazyCompilation && !isProd ? { lazyCompilation: { entries: false } } : {},
+
     optimization: {
       splitChunks: {
         chunks: 'all',

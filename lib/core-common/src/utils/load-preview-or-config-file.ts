@@ -1,13 +1,13 @@
 import path from 'path';
 import { dedent } from 'ts-dedent';
+import type { Options } from '@storybook/core-common';
 
 import { getInterpretedFile } from './interpret-files';
 
-export function loadPreviewOrConfigFile({ configDir }: { configDir: string }) {
-  const storybookConfigPath = getInterpretedFile(path.resolve(configDir, 'config'));
+export function loadPreviewOrConfigFile({ configDir }: Options) {
   const storybookPreviewPath = getInterpretedFile(path.resolve(configDir, 'preview'));
 
-  if (storybookConfigPath && storybookPreviewPath) {
+  if (storybookPreviewPath) {
     throw new Error(dedent`
       You have both a "config.js" and a "preview.js", remove the "config.js" file from your configDir (${path.resolve(
         configDir,
@@ -15,5 +15,5 @@ export function loadPreviewOrConfigFile({ configDir }: { configDir: string }) {
       )})`);
   }
 
-  return storybookPreviewPath || storybookConfigPath;
+  return storybookPreviewPath;
 }
