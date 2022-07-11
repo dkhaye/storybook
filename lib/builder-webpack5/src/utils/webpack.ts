@@ -11,44 +11,13 @@ import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 
 import type { Options, CoreConfig, StorybookConfig } from '@storybook/core-common';
 import {
+  getProjectRoot,
   stringifyProcessEnvs,
-  handlebars,
-  interpolate,
   normalizeStories,
-  readTemplate,
-  loadPreviewOrConfigFile,
+  getPreviewFile,
 } from '@storybook/core-common';
-import { toRequireContextString, toImportFn } from '@storybook/core-webpack';
 import type { BuilderOptions, TypescriptOptions } from '../types';
-import { createBabelLoader } from './babel';
-
-const storybookPaths: Record<string, string> = {
-  global: path.dirname(require.resolve(`global/package.json`)),
-  ...[
-    'addons',
-    'api',
-    'store',
-    'channels',
-    'channel-postmessage',
-    'channel-websocket',
-    'components',
-    'core-events',
-    'router',
-    'theming',
-    'semver',
-    'preview-web',
-    'client-api',
-    'client-logger',
-  ].reduce(
-    (acc, sbPackage) => ({
-      ...acc,
-      [`@storybook/${sbPackage}`]: path.dirname(
-        require.resolve(`@storybook/${sbPackage}/package.json`)
-      ),
-    }),
-    {}
-  ),
-};
+import { getLegacyVirtualEntries, getModernVirtualEntries, getStorybookPaths } from './entries';
 
 export const createWebpackConfig = async (options: Options): Promise<Configuration> => {
   const {
@@ -59,6 +28,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
     presets,
     previewUrl,
     serverChannelUrl,
+    configDir,
   } = options;
 
   const framework = await presets.apply('framework', undefined);
@@ -72,98 +42,50 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
   const frameworkName = typeof framework === 'string' ? framework : framework.name;
   const frameworkOptions = presets.apply('frameworkOptions');
 
+  const { channelOptions, builder } = await presets.apply<CoreConfig>('core');
+
   const isProd = configType === 'PRODUCTION';
+  const workingDir = process.cwd();
+
   const envs = presets.apply<Record<string, string>>('env');
   const logLevel = presets.apply<string>('logLevel');
   const features = options.presets.apply<StorybookConfig['features']>('features');
   const headHtmlSnippet = presets.apply<string>('previewHead');
   const bodyHtmlSnippet = presets.apply<string>('previewBody');
   const template = presets.apply<string>('previewMainTemplate');
-  const config = presets.apply<string[]>('config', []);
-  const entry = presets.apply<string[]>('entries', []);
-  const story = presets.apply('stories', []);
+  const configs = presets.apply<string[]>('config', []);
+  const entriesP = presets.apply<string[]>('entries', []);
+  const stories = presets.apply('stories', []);
 
-  const typescriptOptions = await options.presets.apply<TypescriptOptions>('typescript');
-  const babelOptions = await presets.apply('babel', {}, { ...options, typescriptOptions });
-  const { channelOptions, builder } = await presets.apply<CoreConfig>('core');
+  const babelOptions = presets.apply('babel', {});
   const builderOptions: BuilderOptions = typeof builder === 'string' ? {} : builder?.options || {};
+  const typescriptOptions = options.presets.apply<TypescriptOptions>('typescript');
 
-  const configs = [...(await config), loadPreviewOrConfigFile(options)].filter(Boolean);
-  const entries = await entry;
-  const workingDir = process.cwd();
-  const stories = normalizeStories(await story, {
-    configDir: options.configDir,
-    workingDir,
-  });
+  const configsFinal = [...(await configs), getPreviewFile(options)].filter(Boolean);
+  const entriesFinal = await entriesP;
+  const typescriptOptionsFinal = await typescriptOptions;
+  const storiesFinal = normalizeStories(await stories, { configDir, workingDir });
+  const featuresFinal = await features;
 
-  const virtualModuleMapping: Record<string, string> = {};
-
-  if ((await features)?.storyStoreV7) {
-    const storiesFilename = 'storybook-stories.js';
-    const storiesPath = path.resolve(path.join(workingDir, storiesFilename));
-
-    const needPipelinedImport = !!builderOptions.lazyCompilation && !isProd;
-    virtualModuleMapping[storiesPath] = toImportFn(stories, { needPipelinedImport });
-    const configEntryPath = path.resolve(path.join(workingDir, 'storybook-config-entry.js'));
-    virtualModuleMapping[configEntryPath] = handlebars(
-      await readTemplate(
-        require.resolve(
-          '@storybook/builder-webpack5/templates/virtualModuleModernEntry.js.handlebars'
-        )
-      ),
-      {
-        storiesFilename,
-        configs,
-      }
-      // We need to double escape `\` for webpack. We may have some in windows paths
-    ).replace(/\\/g, '\\\\');
-    entries.push(configEntryPath);
-  } else {
-    const frameworkInitEntry = path.resolve(
-      path.join(workingDir, 'storybook-init-framework-entry.js')
-    );
-    virtualModuleMapping[frameworkInitEntry] = `import '${frameworkName}';`;
-    entries.push(frameworkInitEntry);
-
-    const entryTemplate = await readTemplate(
-      path.join(__dirname, 'virtualModuleEntry.template.js')
-    );
-
-    configs.forEach((configFilename: any) => {
-      const clientApi = storybookPaths['@storybook/client-api'];
-      const clientLogger = storybookPaths['@storybook/client-logger'];
-
-      // NOTE: although this file is also from the `dist/cjs` directory, it is actually a ESM
-      // file, see https://github.com/storybookjs/storybook/pull/16727#issuecomment-986485173
-      virtualModuleMapping[`${configFilename}-generated-config-entry.js`] = interpolate(
-        entryTemplate,
-        {
-          configFilename,
-          clientApi,
-          clientLogger,
-        }
-      );
-      entries.push(`${configFilename}-generated-config-entry.js`);
-    });
-    if (stories.length > 0) {
-      const storyTemplate = await readTemplate(
-        path.join(__dirname, 'virtualModuleStory.template.js')
-      );
-      // NOTE: this file has a `.cjs` extension as it is a CJS file (from `dist/cjs`) and runs
-      // in the user's webpack mode, which may be strict about the use of require/import.
-      // See https://github.com/storybookjs/storybook/issues/14877
-      const storiesFilename = path.resolve(path.join(workingDir, `generated-stories-entry.cjs`));
-      virtualModuleMapping[storiesFilename] = interpolate(storyTemplate, {
-        frameworkName,
+  const { mapping, entries } = featuresFinal?.storyStoreV7
+    ? await getModernVirtualEntries({
+        workingDir,
+        stories: storiesFinal,
+        configs: configsFinal,
+        entries: entriesFinal,
+        isProd,
+        builderOptions,
       })
-        // Make sure we also replace quotes for this one
-        .replace("'{{stories}}'", stories.map(toRequireContextString).join(','));
-      entries.push(storiesFilename);
-    }
-  }
+    : await getLegacyVirtualEntries({
+        workingDir,
+        stories: storiesFinal,
+        configs: configsFinal,
+        entries: entriesFinal,
+        frameworkName,
+      });
 
-  const shouldCheckTs = typescriptOptions.check && !typescriptOptions.skipBabel;
-  const tsCheckOptions = typescriptOptions.checkOptions || {};
+  const shouldCheckTs = typescriptOptionsFinal.check && !typescriptOptionsFinal.skipBabel;
+  const tsCheckOptions = typescriptOptionsFinal.checkOptions || {};
 
   return {
     name: 'preview',
@@ -184,14 +106,11 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
       ignored: /node_modules/,
     },
     ignoreWarnings: [
-      {
-        message: /export '\S+' was not found in 'global'/,
-      },
+      { message: /export '\S+' was not found in 'global'/ },
+      { message: /was not found in 'react'/ },
     ],
     plugins: [
-      Object.keys(virtualModuleMapping).length > 0
-        ? new VirtualModulePlugin(virtualModuleMapping)
-        : (null as any),
+      ...(Object.keys(mapping).length > 0 ? [new VirtualModulePlugin(mapping)] : []),
       new HtmlWebpackPlugin({
         filename: `iframe.html`,
         // FIXME: `none` isn't a known option
@@ -208,7 +127,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
             CHANNEL_OPTIONS: channelOptions,
             FEATURES: await features,
             PREVIEW_URL: previewUrl,
-            STORIES: stories.map((specifier) => ({
+            STORIES: storiesFinal.map((specifier) => ({
               ...specifier,
               importPathMatcher: specifier.importPathMatcher.source,
             })),
@@ -231,14 +150,15 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
       }),
       new ProvidePlugin({ process: require.resolve('process/browser.js') }),
-      isProd ? null : new HotModuleReplacementPlugin(),
+      ...(isProd ? [] : [new HotModuleReplacementPlugin()]),
       new CaseSensitivePathsPlugin(),
-      quiet ? null : new ProgressPlugin({}),
-      shouldCheckTs ? new ForkTsCheckerWebpackPlugin(tsCheckOptions) : null,
-    ].filter(Boolean),
+      ...(quiet ? [] : [new ProgressPlugin({})]),
+      ...(shouldCheckTs ? [new ForkTsCheckerWebpackPlugin(tsCheckOptions)] : []),
+    ],
     module: {
       rules: [
         {
+          layer: 'storybook_css',
           test: /\.css$/,
           sideEffects: true,
           use: [
@@ -252,6 +172,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
           ],
         },
         {
+          layer: 'storybook_media',
           test: /\.(svg|ico|jpg|jpeg|png|apng|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)(\?.*)?$/,
           type: 'asset/resource',
           generator: {
@@ -261,6 +182,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
           },
         },
         {
+          layer: 'storybook_media',
           test: /\.(mp4|webm|wav|mp3|m4a|aac|oga)(\?.*)?$/,
           type: 'asset',
           parser: {
@@ -275,11 +197,9 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
           },
         },
         {
+          layer: 'storybook_esm',
           test: /\.m?js$/,
           type: 'javascript/auto',
-        },
-        {
-          test: /\.m?js$/,
           resolve: {
             fullySpecified: false,
           },
@@ -288,14 +208,25 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
           test: /\.md$/,
           type: 'asset/source',
         },
-        createBabelLoader(babelOptions, typescriptOptions),
+        {
+          layer: 'storybook_babel',
+          test: typescriptOptionsFinal.skipBabel ? /\.(mjs|jsx?)$/ : /\.(mjs|tsx?|jsx?)$/,
+          use: [
+            {
+              loader: require.resolve('babel-loader'),
+              options: await babelOptions,
+            },
+          ],
+          include: [getProjectRoot()],
+          exclude: /node_modules/,
+        },
       ],
     },
     resolve: {
       extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.cjs'],
       modules: ['node_modules'].concat((await envs).NODE_PATH || []),
-      mainFields: ['browser', 'module', 'main'].filter(Boolean),
-      alias: storybookPaths,
+      mainFields: ['browser', 'module', 'main'],
+      alias: getStorybookPaths(),
       fallback: {
         path: require.resolve('path-browserify'),
         assert: require.resolve('browser-assert'),
@@ -304,8 +235,10 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
       },
     },
     ...(builderOptions.fsCache ? { cache: { type: 'filesystem' as const } } : {}),
-    experiments:
-      builderOptions.lazyCompilation && !isProd ? { lazyCompilation: { entries: false } } : {},
+    experiments: {
+      ...(builderOptions.lazyCompilation && !isProd ? { lazyCompilation: { entries: false } } : {}),
+      layers: true,
+    },
 
     optimization: {
       splitChunks: {
