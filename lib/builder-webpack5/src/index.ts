@@ -44,10 +44,7 @@ export const getConfig: WebpackBuilder['getConfig'] = async (options) => {
   const base = await createWebpackConfig(options);
   const intermediate = await presets.apply<Configuration>('webpack', base);
 
-  const out = await presets.apply<Configuration>('webpackFinal', intermediate);
-
-  console.log(out);
-  return out;
+  return presets.apply<Configuration>('webpackFinal', intermediate);
 };
 
 let asyncIterator: ReturnType<StarterFunction> | ReturnType<BuilderFunction>;
