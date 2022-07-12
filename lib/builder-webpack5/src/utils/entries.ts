@@ -33,14 +33,14 @@ export const getStorybookPaths = (): Record<string, string> => ({
 });
 
 export async function getModernVirtualEntries({
-  workingDir,
+  configDir,
   builderOptions,
   isProd,
   stories,
   configs,
   entries: originalEntries,
 }: {
-  workingDir: string;
+  configDir: string;
   builderOptions: BuilderOptions;
   isProd: boolean;
   stories: ReturnType<typeof normalizeStories>;
@@ -49,7 +49,7 @@ export async function getModernVirtualEntries({
 }) {
   const entries = [...originalEntries];
   const mapping: Record<string, string> = {};
-  const r = (p: string) => path.resolve(path.join(workingDir, p));
+  const r = (p: string) => path.resolve(path.join(configDir, p));
 
   const storiesFileName = 'storybook-stories.js';
   const storiesPath = r(storiesFileName);
@@ -75,13 +75,13 @@ export async function getModernVirtualEntries({
 }
 
 export async function getLegacyVirtualEntries({
-  workingDir,
+  configDir,
   stories,
   configs,
   entries: originalEntries,
   frameworkName,
 }: {
-  workingDir: string;
+  configDir: string;
   stories: ReturnType<typeof normalizeStories>;
   configs: (string | undefined)[];
   entries: string[];
@@ -89,15 +89,15 @@ export async function getLegacyVirtualEntries({
 }) {
   const entries = [...originalEntries];
   const mapping: Record<string, string> = {};
-  const r = (p: string) => path.resolve(path.join(workingDir, p));
+  const r = (p: string) => path.resolve(path.join(configDir, p));
   const storybookPaths = getStorybookPaths();
 
-  const frameworkInitEntry = r('storybook-init-framework-entry.js');
+  const frameworkInitEntry = r('storybook-init-framework-entry.mjs');
   mapping[frameworkInitEntry] = `import '${frameworkName}';`;
   entries.push(frameworkInitEntry);
 
   const template = await readTemplate(
-    require.resolve('@storybook/builder-webpack5/templates/virtualModuleEntry.template.js')
+    require.resolve('@storybook/builder-webpack5/templates/virtualModuleEntry.template.mjs')
   );
 
   configs.forEach((configFilename: any) => {
