@@ -80,7 +80,7 @@ export const webpackFinal: StorybookConfig['webpack'] = async (config, options) 
   const craWebpackConfig: Configuration = require(craWebpackConfigPath)(config.mode);
 
   config.module.rules = [
-    ...((config.module?.rules ?? []) as unknown as RuleSetRule[]).filter(
+    ...(config.module.rules as unknown as RuleSetRule[]).filter(
       (r) =>
         r.layer !== 'storybook_babel' &&
         r.layer !== 'storybook_css' &&
