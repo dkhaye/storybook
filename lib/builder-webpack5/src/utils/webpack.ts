@@ -69,7 +69,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
 
   const { mapping, entries } = featuresFinal?.storyStoreV7
     ? await getModernVirtualEntries({
-        workingDir,
+        configDir,
         stories: storiesFinal,
         configs: configsFinal,
         entries: entriesFinal,
@@ -77,7 +77,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
         builderOptions,
       })
     : await getLegacyVirtualEntries({
-        workingDir,
+        configDir,
         stories: storiesFinal,
         configs: configsFinal,
         entries: entriesFinal,
