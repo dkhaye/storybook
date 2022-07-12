@@ -253,6 +253,3 @@ export const build = async (options: BuilderStartOptions) => {
 
   return result.value;
 };
-
-export const corePresets: string[] = [require.resolve('./presets/preview-preset.js')];
-export const overridePresets: string[] = [];

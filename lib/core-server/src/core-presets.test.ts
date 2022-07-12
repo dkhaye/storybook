@@ -29,7 +29,6 @@ jest.mock('@storybook/builder-webpack5', () => {
   const actualBuilder = jest.requireActual('@storybook/builder-webpack5');
   // MUTATION! we couldn't mock webpack5, so we added a level of indirection instead
   actualBuilder.executor.get = () => value;
-  actualBuilder.overridePresets = [...actualBuilder.overridePresets, skipStoriesJsonPreset];
   return actualBuilder;
 });
 
