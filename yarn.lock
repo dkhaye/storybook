@@ -17946,8 +17946,8 @@ __metadata:
     "@storybook/addons": 7.0.0-alpha.12
     "@storybook/builder-webpack5": 7.0.0-alpha.12
     "@storybook/client-logger": 7.0.0-alpha.12
+    "@storybook/cra": 7.0.0-alpha.12
     "@storybook/react": 7.0.0-alpha.12
-    "@storybook/react-webpack5": 7.0.0-alpha.12
     "@storybook/theming": 7.0.0-alpha.12
     global: ^4.4.0
     prop-types: ^15.7.2
@@ -17998,8 +17998,8 @@ __metadata:
     "@storybook/addon-links": 7.0.0-alpha.12
     "@storybook/addons": 7.0.0-alpha.12
     "@storybook/builder-webpack5": 7.0.0-alpha.12
+    "@storybook/cra": 7.0.0-alpha.12
     "@storybook/react": 7.0.0-alpha.12
-    "@storybook/react-webpack5": 7.0.0-alpha.12
     "@types/enzyme": ^3.10.8
     "@types/jest": 25.2.3
     "@types/node": ^14.14.20 || ^16.0.0
