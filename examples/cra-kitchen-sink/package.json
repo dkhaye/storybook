@@ -31,7 +31,6 @@
     "@storybook/addon-storyshots": "7.0.0-alpha.12",
     "@storybook/addons": "7.0.0-alpha.12",
     "@storybook/builder-webpack5": "7.0.0-alpha.12",
-    "@storybook/preset-create-react-app": "^4.1.0",
     "@storybook/react": "7.0.0-alpha.12",
     "@storybook/react-webpack5": "7.0.0-alpha.12",
     "@storybook/theming": "7.0.0-alpha.12",

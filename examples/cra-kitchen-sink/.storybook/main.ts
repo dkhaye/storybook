@@ -6,7 +6,6 @@ const mainConfig: StorybookConfig = {
   stories: ['../src/stories/**/*.stories.@(ts|tsx|js|jsx|mdx)'],
   logLevel: 'debug',
   addons: [
-    '@storybook/preset-create-react-app',
     {
       name: '@storybook/addon-docs/preset',
       options: {

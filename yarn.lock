@@ -6607,7 +6607,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.1, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.3, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.5":
+"@pmmmwh/react-refresh-webpack-plugin@npm:^0.5.3, @pmmmwh/react-refresh-webpack-plugin@npm:^0.5.5":
   version: 0.5.7
   resolution: "@pmmmwh/react-refresh-webpack-plugin@npm:0.5.7"
   dependencies:
@@ -8932,25 +8932,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@storybook/preset-create-react-app@npm:^4.1.0":
-  version: 4.1.1
-  resolution: "@storybook/preset-create-react-app@npm:4.1.1"
-  dependencies:
-    "@pmmmwh/react-refresh-webpack-plugin": ^0.5.1
-    "@storybook/react-docgen-typescript-plugin": canary
-    "@types/babel__core": ^7.1.7
-    babel-plugin-react-docgen: ^4.1.0
-    pnp-webpack-plugin: ^1.7.0
-    semver: ^7.3.5
-  peerDependencies:
-    "@babel/core": "*"
-    "@storybook/node-logger": "*"
-    "@storybook/react": ">=5.2"
-    react-scripts: ">=5.0.0"
-  checksum: fb4af8023f5e9a995b08375f7b0eee1c989da62dc2a5c94cbcef7c6490807743eb9778ab875f556a9a9093a27f7c4526b7a5ed97175443527006103543b72456
-  languageName: node
-  linkType: hard
-
 "@storybook/preset-html-webpack@7.0.0-alpha.12, @storybook/preset-html-webpack@workspace:*, @storybook/preset-html-webpack@workspace:presets/html-webpack":
   version: 0.0.0-use.local
   resolution: "@storybook/preset-html-webpack@workspace:presets/html-webpack"
@@ -9181,7 +9162,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@storybook/react-docgen-typescript-plugin@npm:1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0, @storybook/react-docgen-typescript-plugin@npm:canary":
+"@storybook/react-docgen-typescript-plugin@npm:1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0":
   version: 1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0
   resolution: "@storybook/react-docgen-typescript-plugin@npm:1.0.2-canary.6.9d540b91e815f8fc2f8829189deb00553559ff63.0"
   dependencies:
@@ -14605,7 +14586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-react-docgen@npm:^4.1.0, babel-plugin-react-docgen@npm:^4.2.1":
+"babel-plugin-react-docgen@npm:^4.2.1":
   version: 4.2.1
   resolution: "babel-plugin-react-docgen@npm:4.2.1"
   dependencies:
@@ -17965,7 +17946,6 @@ __metadata:
     "@storybook/addons": 7.0.0-alpha.12
     "@storybook/builder-webpack5": 7.0.0-alpha.12
     "@storybook/client-logger": 7.0.0-alpha.12
-    "@storybook/preset-create-react-app": ^4.1.0
     "@storybook/react": 7.0.0-alpha.12
     "@storybook/react-webpack5": 7.0.0-alpha.12
     "@storybook/theming": 7.0.0-alpha.12
@@ -18018,7 +17998,6 @@ __metadata:
     "@storybook/addon-links": 7.0.0-alpha.12
     "@storybook/addons": 7.0.0-alpha.12
     "@storybook/builder-webpack5": 7.0.0-alpha.12
-    "@storybook/preset-create-react-app": ^4.1.0
     "@storybook/react": 7.0.0-alpha.12
     "@storybook/react-webpack5": 7.0.0-alpha.12
     "@types/enzyme": ^3.10.8
@@ -35197,15 +35176,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pnp-webpack-plugin@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "pnp-webpack-plugin@npm:1.7.0"
-  dependencies:
-    ts-pnp: ^1.1.6
-  checksum: 79d1973ec0b04be6d44f15d5625991701a010dae28f2798d974d3aa164e8c60dc7fa22fd01a47fb6af369c4ba6585c3030d4deb775ccfecd7156594bc223d086
-  languageName: node
-  linkType: hard
-
 "polished@npm:^3.6.4":
   version: 3.7.2
   resolution: "polished@npm:3.7.2"
@@ -43524,16 +43494,6 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: eae7b541ecc99e07bd78fd977fe4be4f253d0a53fbb2ca234e7db8647b563ea71d5e2244418ff2730c184279bf1003c468b2489f3a75dca54e99cdfabafb46b3
-  languageName: node
-  linkType: hard
-
-"ts-pnp@npm:^1.1.6":
-  version: 1.2.0
-  resolution: "ts-pnp@npm:1.2.0"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: ff32b4f810f9d99f676d70fe2c0e327cb6c812214bd4fc7135870b039f9e85a85b2c20f8fe030d9bd36e9598a12faa391f10aecb95df624b92f1af6bd47dc397
   languageName: node
   linkType: hard
 
