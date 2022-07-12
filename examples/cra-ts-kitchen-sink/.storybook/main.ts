@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-webpack5';
+import type { StorybookConfig } from '@storybook/cra';
 
 const path = require('path');
 
@@ -38,7 +38,7 @@ const mainConfig: StorybookConfig = {
     buildStoriesJson: true,
     breakingChangesV7: true,
   },
-  framework: '@storybook/react-webpack5',
+  framework: '@storybook/cra',
 };
 
 module.exports = mainConfig;

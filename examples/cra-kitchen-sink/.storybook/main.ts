@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-webpack5';
+import type { StorybookConfig } from '@storybook/cra';
 
 const path = require('path');
 
@@ -44,7 +44,7 @@ const mainConfig: StorybookConfig = {
     breakingChangesV7: true,
   },
   framework: {
-    name: '@storybook/react-webpack5',
+    name: '@storybook/cra',
     options: { fastRefresh: true },
   },
 };

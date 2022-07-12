@@ -8398,6 +8398,31 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@storybook/cra@7.0.0-alpha.12, @storybook/cra@workspace:frameworks/cra":
+  version: 0.0.0-use.local
+  resolution: "@storybook/cra@workspace:frameworks/cra"
+  dependencies:
+    "@digitak/esrun": ^3.2.2
+    "@storybook/builder-webpack5": 7.0.0-alpha.12
+    "@storybook/core-common": 7.0.0-alpha.12
+    "@storybook/node-logger": 7.0.0-alpha.12
+    "@storybook/preset-react-webpack": 7.0.0-alpha.12
+    "@storybook/react": 7.0.0-alpha.12
+    "@types/node": ^14.14.20 || ^16.0.0
+    fs-extra: ^9.0.1
+    typescript: ~4.6.3
+  peerDependencies:
+    "@babel/core": ^7.11.5
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    typescript:
+      optional: true
+  languageName: unknown
+  linkType: soft
+
 "@storybook/csf-tools@7.0.0-alpha.12, @storybook/csf-tools@workspace:*, @storybook/csf-tools@workspace:lib/csf-tools":
   version: 0.0.0-use.local
   resolution: "@storybook/csf-tools@workspace:lib/csf-tools"
@@ -17961,11 +17986,9 @@ __metadata:
   dependencies:
     "@storybook/addon-essentials": 7.0.0-alpha.12
     "@storybook/addons": 7.0.0-alpha.12
-    "@storybook/builder-webpack5": 7.0.0-alpha.12
     "@storybook/components": 7.0.0-alpha.12
-    "@storybook/preset-create-react-app": ^4.1.0
+    "@storybook/cra": 7.0.0-alpha.12
     "@storybook/react": 7.0.0-alpha.12
-    "@storybook/react-webpack5": 7.0.0-alpha.12
     "@storybook/testing-library": ^0.0.9
     "@storybook/theming": 7.0.0-alpha.12
     "@types/jest": ^26.0.16

@@ -1,6 +1,6 @@
-# Storybook for React
+# Storybook for CRA
 
-Storybook for React is a UI development environment for your React components.
+Storybook for CRA is a UI development environment for your React components.
 With it, you can visualize different states of your UI components and develop them interactively.
 
 ![Storybook Screenshot](https://github.com/storybookjs/storybook/blob/main/media/storybook-intro.gif)
@@ -26,13 +26,7 @@ Here are some featured storybooks that you can reference to see how Storybook wo
 
 - [Demo of Storybook Design System](https://storybook.js.org/design-system) - [source](https://github.com/storybookjs/design-system)
 
-## React meta frameworks
-
-### Create React App
-
-Support for [Create React App](https://create-react-app.dev/) is handled by [`@storybook/cra`](https://github.com/storybookjs/storybook/tree/master/frameworks/cra).
-
-### Others
+## Create React App
 
 TODO
 
