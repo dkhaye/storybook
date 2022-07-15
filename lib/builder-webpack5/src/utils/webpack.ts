@@ -107,6 +107,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
     },
     ignoreWarnings: [
       { message: /export '\S+' was not found in 'global'/ },
+      { message: /Failed to parse source map/ },
       { message: /was not found in 'react'/ },
     ],
     plugins: [
