@@ -126,6 +126,11 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
     (craWebpackConfig?.plugins || []).filter((p) => !p.constructor.name.includes('DefinePlugin'))
   );
 
+  config.resolve = {
+    ...config.resolve,
+    ...craWebpackConfig?.resolve,
+  };
+
   config.resolve.alias = {
     ...config.resolve?.alias,
     '@storybook/react': dirname(require.resolve(join('@storybook/react', 'package.json'))),
