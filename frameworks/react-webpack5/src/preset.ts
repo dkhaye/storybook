@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import path, { dirname, join } from 'path';
+import { dirname, join } from 'path';
 import type { PresetProperty, Options } from '@storybook/core-common';
 import type { FrameworkOptions, StorybookConfig } from './types';
 
