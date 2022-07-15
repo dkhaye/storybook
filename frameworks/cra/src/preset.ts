@@ -121,7 +121,9 @@ export const webpackFinal: StorybookConfig['webpack'] = async (config, options) 
     }),
   ];
 
-  config.plugins = (config.plugins || []).concat(craWebpackConfig?.plugins || []);
+  config.plugins = (config.plugins || []).concat(
+    (craWebpackConfig?.plugins || []).filter((p) => !p.constructor.name.includes('DefinePlugin'))
+  );
 
   config.resolve.alias = {
     ...config.resolve?.alias,
