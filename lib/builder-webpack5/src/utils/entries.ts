@@ -33,14 +33,14 @@ export const getStorybookPaths = (): Record<string, string> => ({
 });
 
 export async function getModernVirtualEntries({
-  configDir,
+  workingDir,
   builderOptions,
   isProd,
   stories,
   configs,
   entries: originalEntries,
 }: {
-  configDir: string;
+  workingDir: string;
   builderOptions: BuilderOptions;
   isProd: boolean;
   stories: ReturnType<typeof normalizeStories>;
@@ -49,7 +49,7 @@ export async function getModernVirtualEntries({
 }) {
   const entries = [...originalEntries];
   const mapping: Record<string, string> = {};
-  const r = (p: string) => path.resolve(path.join(configDir, p));
+  const r = (p: string) => path.resolve(path.join(workingDir, p));
 
   const storiesFileName = 'storybook-stories.js';
   const storiesPath = r(storiesFileName);
@@ -75,13 +75,13 @@ export async function getModernVirtualEntries({
 }
 
 export async function getLegacyVirtualEntries({
-  configDir,
+  workingDir,
   stories,
   configs,
   entries: originalEntries,
   frameworkName,
 }: {
-  configDir: string;
+  workingDir: string;
   stories: ReturnType<typeof normalizeStories>;
   configs: (string | undefined)[];
   entries: string[];
@@ -89,7 +89,7 @@ export async function getLegacyVirtualEntries({
 }) {
   const entries = [...originalEntries];
   const mapping: Record<string, string> = {};
-  const r = (p: string) => path.resolve(path.join(configDir, p));
+  const r = (p: string) => path.resolve(path.join(workingDir, p));
   const storybookPaths = getStorybookPaths();
 
   const frameworkInitEntry = r('storybook-init-framework-entry.mjs');
