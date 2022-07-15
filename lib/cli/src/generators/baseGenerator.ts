@@ -72,6 +72,14 @@ const getFrameworkDetails = (
     };
   }
 
+  if (renderer === 'cra') {
+    return {
+      packages: [rendererPackage],
+      framework: rendererPackagePath,
+      type: 'framework',
+    };
+  }
+
   if (isKnownFramework) {
     return {
       packages: [frameworkPackage],
