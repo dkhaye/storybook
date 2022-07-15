@@ -127,8 +127,8 @@ export async function getLegacyVirtualEntries({
     const data = {
       frameworkName,
     };
-    // Make sure we also replace quotes for this one
     mapping[fileName] = interpolate(storyTemplate, data).replace(
+      // Make sure we also replace quotes for this one
       "'{{stories}}'",
       stories.map(toRequireContextString).join(',')
     );

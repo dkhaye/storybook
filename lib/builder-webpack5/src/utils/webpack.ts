@@ -45,7 +45,6 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
   const { channelOptions, builder } = await presets.apply<CoreConfig>('core');
 
   const isProd = configType === 'PRODUCTION';
-  const workingDir = process.cwd();
 
   const envs = presets.apply<Record<string, string>>('env');
   const logLevel = presets.apply<string>('logLevel');
@@ -64,7 +63,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
   const configsFinal = [...(await configs), getPreviewFile(options)].filter(Boolean);
   const entriesFinal = await entriesP;
   const typescriptOptionsFinal = await typescriptOptions;
-  const storiesFinal = normalizeStories(await stories, { configDir, workingDir });
+  const storiesFinal = normalizeStories(await stories, { configDir, workingDir: configDir });
   const featuresFinal = await features;
 
   const { mapping, entries } = featuresFinal?.storyStoreV7

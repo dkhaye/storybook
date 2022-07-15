@@ -21,9 +21,6 @@ const { packageJson } = readUpSync({ cwd: __dirname });
 // this only applies to this file
 jest.setTimeout(10000);
 
-// FIXME: this doesn't work
-const skipStoriesJsonPreset = [{ features: { buildStoriesJson: false, storyStoreV7: false } }];
-
 jest.mock('@storybook/builder-webpack5', () => {
   const value = jest.fn(() => false);
   const actualBuilder = jest.requireActual('@storybook/builder-webpack5');

@@ -3,8 +3,7 @@
 exports[`html-kitchen-sink preview prod 1`] = `
 Object {
   "entry": Array [
-    "ROOT/lib/core-client/dist/esm/globals/globals.js",
-    "ROOT/storybook-config-entry.js",
+    "ROOT/examples/html-kitchen-sink/.storybook/storybook-config-entry.js",
   ],
   "keys": Array [
     "name",
@@ -84,14 +83,6 @@ Object {
             "loader": "NODE_MODULES/babel-loader/lib/index.js",
             "options": Object {
               "cacheDirectory": "NODE_MODULES/.cache/storybook/babel",
-              "overrides": Array [
-                Object {
-                  "plugins": Array [
-                    "NODE_MODULES/babel-plugin-named-exports-order/index.js",
-                  ],
-                  "test": "/\\\\.(story|stories).*$/",
-                },
-              ],
             },
           },
         ],
@@ -101,6 +92,7 @@ Object {
         "use": "NODE_MODULES/html-loader/dist/cjs.js",
       },
       Object {
+        "layer": "storybook_mdx",
         "test": "/(stories|story)\\\\.mdx$/",
         "use": Array [
           Object {
@@ -126,6 +118,7 @@ Object {
       },
       Object {
         "exclude": "/(stories|story)\\\\.mdx$/",
+        "layer": "storybook_mdx",
         "test": "/\\\\.mdx$/",
         "use": Array [
           Object {
@@ -158,32 +151,13 @@ Object {
       },
       Object {
         "enforce": "pre",
+        "layer": "storybook_source",
         "loader": "ROOT/lib/source-loader/dist/cjs/index.js",
         "options": Object {
           "injectStoryParameters": true,
           "inspectLocalDependencies": true,
         },
         "test": "/\\\\.(stories|story)\\\\.[tj]sx?$/",
-      },
-      Object {
-        "sideEffects": true,
-        "test": "/\\\\.css$/",
-        "use": Array [
-          Object {
-            "loader": "NODE_MODULES/style-loader/dist/cjs.js",
-            "options": undefined,
-          },
-          Object {
-            "loader": "NODE_MODULES/css-loader/dist/cjs.js",
-            "options": undefined,
-          },
-          Object {
-            "loader": "NODE_MODULES/postcss-loader/dist/cjs.js",
-            "options": Object {
-              "implementation": [Function],
-            },
-          },
-        ],
       },
       Object {
         "enforce": "pre",

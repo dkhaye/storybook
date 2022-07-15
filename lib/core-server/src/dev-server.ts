@@ -37,6 +37,7 @@ export async function storybookDevServer(options: Options): Promise<{
   managerResult: UnPromisify<ReturnType<Builder<unknown, Stats>['start']>>;
   previewResult: UnPromisify<ReturnType<Builder<unknown, Stats>['start']>>;
 }> {
+  const { configDir } = options;
   const startTime = process.hrtime();
   const app = express();
   const server = await getServer(app, options);
@@ -51,8 +52,8 @@ export async function storybookDevServer(options: Options): Promise<{
     try {
       const workingDir = process.cwd();
       const directories = {
-        configDir: options.configDir,
-        workingDir,
+        configDir,
+        workingDir: process.cwd(),
       };
       const normalizedStories = normalizeStories(
         await options.presets.apply('stories'),
@@ -102,12 +103,12 @@ export async function storybookDevServer(options: Options): Promise<{
             },
           }
         : undefined;
-      telemetry('start', payload, { configDir: options.configDir });
+      telemetry('start', payload, { configDir });
     });
   }
 
   if (!core.disableProjectJson) {
-    useStorybookMetadata(router, options.configDir);
+    useStorybookMetadata(router, configDir);
   }
 
   app.use(compression({ level: 1 }));
@@ -137,7 +138,7 @@ export async function storybookDevServer(options: Options): Promise<{
   // User's own static files
   await useStatics(router, options);
 
-  getMiddleware(options.configDir)(router);
+  getMiddleware(configDir)(router);
   app.use(router);
 
   const { port, host } = options;
@@ -160,7 +161,7 @@ export async function storybookDevServer(options: Options): Promise<{
   });
 
   const builderName = typeof core.builder === 'string' ? core.builder : core.builder.name;
-  const previewBuilder = await getPreviewBuilder(builderName, options.configDir);
+  const previewBuilder = await getPreviewBuilder(builderName, configDir);
 
   if (options.debugWebpack) {
     logConfig('Preview webpack config', await previewBuilder.getConfig(options));
