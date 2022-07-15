@@ -404,14 +404,6 @@ export interface StorybookConfig {
   ) => TransformOptions | Promise<TransformOptions>;
 
   /**
-   * Modify or return babel config.
-   */
-  babelDefault?: (
-    config: TransformOptions,
-    options: Options
-  ) => TransformOptions | Promise<TransformOptions>;
-
-  /**
    * Add additional scripts to run in the preview a la `.storybook/preview.js`
    *
    * @deprecated use `previewAnnotations` or `/preview.js` file instead

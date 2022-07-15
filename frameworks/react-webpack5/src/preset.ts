@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 
-import path from 'path';
+import path, { dirname, join } from 'path';
 import type { PresetProperty, Options } from '@storybook/core-common';
 import type { FrameworkOptions, StorybookConfig } from './types';
 
 export const addons: PresetProperty<'addons', StorybookConfig> = [
-  path.dirname(require.resolve(path.join('@storybook/preset-react-webpack', 'package.json'))),
-  path.dirname(require.resolve(path.join('@storybook/react', 'package.json'))),
+  dirname(require.resolve(join('@storybook/preset-react-webpack', 'package.json'))),
+  dirname(require.resolve(join('@storybook/react', 'package.json'))),
+  dirname(require.resolve(join('@storybook/builder-webpack5', 'package.json'))),
 ];
 
 const defaultFrameworkOptions: FrameworkOptions = {
@@ -47,8 +48,8 @@ export const core: PresetProperty<'core', StorybookConfig> = async (config, opti
   return {
     ...config,
     builder: {
-      name: path.dirname(
-        require.resolve(path.join('@storybook/builder-webpack5', 'package.json'))
+      name: dirname(
+        require.resolve(join('@storybook/builder-webpack5', 'package.json'))
       ) as '@storybook/builder-webpack5',
       options: typeof framework === 'string' ? {} : framework.options.builder || {},
     },
@@ -60,9 +61,7 @@ export const webpack: StorybookConfig['webpack'] = async (config) => {
 
   config.resolve.alias = {
     ...config.resolve?.alias,
-    '@storybook/react': path.dirname(
-      require.resolve(path.join('@storybook/react', 'package.json'))
-    ),
+    '@storybook/react': dirname(require.resolve(join('@storybook/react', 'package.json'))),
   };
   return config;
 };

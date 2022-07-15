@@ -12,6 +12,7 @@ import { checkForIncompatiblePresets } from './utils/compatibility';
 export const addons: PresetProperty<'addons', StorybookConfig> = [
   dirname(require.resolve(join('@storybook/preset-react-webpack', 'package.json'))),
   dirname(require.resolve(join('@storybook/react', 'package.json'))),
+  dirname(require.resolve(join('@storybook/builder-webpack5', 'package.json'))),
 ];
 
 const defaultFrameworkOptions: FrameworkOptions = {
