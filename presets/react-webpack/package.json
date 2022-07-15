@@ -112,7 +112,6 @@
   "bundler": {
     "entries": [
       "./src/index.ts",
-      "./src/framework-preset-cra.ts",
       "./src/framework-preset-react-docs.ts",
       "./src/framework-preset-react-dom-hack.ts",
       "./src/framework-preset-react.ts"
