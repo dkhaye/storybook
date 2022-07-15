@@ -3,7 +3,9 @@
 exports[`cra-ts-essentials preview dev 1`] = `
 Object {
   "entry": Array [
-    "ROOT/examples/cra-ts-essentials/.storybook/storybook-config-entry.js",
+    "ROOT/lib/core-client/dist/esm/globals/globals.js",
+    "NODE_MODULES/webpack-hot-middleware/client.js?reload=true&quiet=false&noInfo=undefined",
+    "ROOT/storybook-config-entry.js",
   ],
   "keys": Array [
     "name",
@@ -89,6 +91,12 @@ Object {
                     ],
                   ],
                   "test": "/\\\\.(cjs|mjs|jsx?)$/",
+                },
+                Object {
+                  "plugins": Array [
+                    "NODE_MODULES/babel-plugin-named-exports-order/index.js",
+                  ],
+                  "test": "/\\\\.(story|stories).*$/",
                 },
               ],
               "plugins": Array [
@@ -519,7 +527,6 @@ Object {
     "HtmlWebpackPlugin",
     "InterpolateHtmlPlugin",
     "ModuleNotFoundPlugin",
-    "DefinePlugin",
     "ReactRefreshPlugin",
     "CaseSensitivePathsPlugin",
     "WebpackManifestPlugin",

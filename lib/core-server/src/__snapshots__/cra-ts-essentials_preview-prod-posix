@@ -3,7 +3,8 @@
 exports[`cra-ts-essentials preview prod 1`] = `
 Object {
   "entry": Array [
-    "ROOT/examples/cra-ts-essentials/.storybook/storybook-config-entry.js",
+    "ROOT/lib/core-client/dist/esm/globals/globals.js",
+    "ROOT/storybook-config-entry.js",
   ],
   "keys": Array [
     "name",
@@ -89,6 +90,12 @@ Object {
                     ],
                   ],
                   "test": "/\\\\.(cjs|mjs|jsx?)$/",
+                },
+                Object {
+                  "plugins": Array [
+                    "NODE_MODULES/babel-plugin-named-exports-order/index.js",
+                  ],
+                  "test": "/\\\\.(story|stories).*$/",
                 },
               ],
               "plugins": Array [
@@ -529,7 +536,6 @@ Object {
     "InlineChunkHtmlPlugin",
     "InterpolateHtmlPlugin",
     "ModuleNotFoundPlugin",
-    "DefinePlugin",
     "MiniCssExtractPlugin",
     "WebpackManifestPlugin",
     "IgnorePlugin",
