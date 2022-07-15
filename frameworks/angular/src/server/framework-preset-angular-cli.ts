@@ -18,7 +18,7 @@ import {
   readAngularWorkspaceConfig,
 } from './angular-read-workspace';
 
-export async function webpackFinal(baseConfig: webpack.Configuration, options: PresetOptions) {
+export async function webpack(baseConfig: webpack.Configuration, options: PresetOptions) {
   if (!moduleIsAvailable('@angular-devkit/build-angular')) {
     logger.info('=> Using base config because "@angular-devkit/build-angular" is not installed');
     return baseConfig;

@@ -61,7 +61,7 @@ export const core: PresetProperty<'core', StorybookConfig> = async (config, opti
   };
 };
 
-export const webpackFinal: StorybookConfig['webpack'] = async (config, options) => {
+export const webpack: StorybookConfig['webpack'] = async (config, options) => {
   config.resolve = config.resolve || {};
   config.module = config.module || {};
   config.module.rules = config.module.rules || [];
