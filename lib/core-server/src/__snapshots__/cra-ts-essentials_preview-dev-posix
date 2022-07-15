@@ -115,81 +115,6 @@ Object {
         ],
       },
       Object {
-        "test": "/(stories|story)\\\\.mdx$/",
-        "use": Array [
-          Object {
-            "loader": "NODE_MODULES/babel-loader/lib/index.js",
-            "options": Object {
-              "babelrc": false,
-              "configFile": false,
-              "plugins": Array [
-                Array [
-                  "NODE_MODULES/@babel/plugin-transform-react-jsx/lib/index.js",
-                  Object {
-                    "pragma": "React.createElement",
-                    "pragmaFrag": "React.Fragment",
-                  },
-                ],
-              ],
-            },
-          },
-          Object {
-            "loader": "NODE_MODULES/@storybook/mdx1-csf/loader.js",
-          },
-        ],
-      },
-      Object {
-        "exclude": "/(stories|story)\\\\.mdx$/",
-        "test": "/\\\\.mdx$/",
-        "use": Array [
-          Object {
-            "loader": "NODE_MODULES/babel-loader/lib/index.js",
-            "options": Object {
-              "babelrc": false,
-              "configFile": false,
-              "plugins": Array [
-                Array [
-                  "NODE_MODULES/@babel/plugin-transform-react-jsx/lib/index.js",
-                  Object {
-                    "pragma": "React.createElement",
-                    "pragmaFrag": "React.Fragment",
-                  },
-                ],
-              ],
-            },
-          },
-          Object {
-            "loader": "NODE_MODULES/@storybook/mdx1-csf/loader.js",
-            "options": Object {
-              "remarkPlugins": Array [
-                [Function],
-                [Function],
-              ],
-              "skipCsf": true,
-            },
-          },
-        ],
-      },
-      Object {
-        "enforce": "pre",
-        "loader": "ROOT/lib/source-loader/dist/cjs/index.js",
-        "options": Object {
-          "injectStoryParameters": true,
-          "inspectLocalDependencies": true,
-        },
-        "test": "/\\\\.(stories|story)\\\\.[tj]sx?$/",
-      },
-      Object {
-        "test": "/\\\\.m?js$/",
-        "type": "javascript/auto",
-      },
-      Object {
-        "resolve": Object {
-          "fullySpecified": false,
-        },
-        "test": "/\\\\.m?js$/",
-      },
-      Object {
         "enforce": "pre",
         "exclude": "/@babel(?:\\\\/|\\\\\\\\{1,2})runtime/",
         "loader": "NODE_MODULES/source-map-loader/dist/cjs.js",
@@ -512,6 +437,71 @@ Object {
           },
         ],
       },
+      Object {
+        "test": "/(stories|story)\\\\.mdx$/",
+        "use": Array [
+          Object {
+            "loader": "NODE_MODULES/babel-loader/lib/index.js",
+            "options": Object {
+              "babelrc": false,
+              "configFile": false,
+              "plugins": Array [
+                Array [
+                  "NODE_MODULES/@babel/plugin-transform-react-jsx/lib/index.js",
+                  Object {
+                    "pragma": "React.createElement",
+                    "pragmaFrag": "React.Fragment",
+                  },
+                ],
+              ],
+            },
+          },
+          Object {
+            "loader": "NODE_MODULES/@storybook/mdx1-csf/loader.js",
+          },
+        ],
+      },
+      Object {
+        "exclude": "/(stories|story)\\\\.mdx$/",
+        "test": "/\\\\.mdx$/",
+        "use": Array [
+          Object {
+            "loader": "NODE_MODULES/babel-loader/lib/index.js",
+            "options": Object {
+              "babelrc": false,
+              "configFile": false,
+              "plugins": Array [
+                Array [
+                  "NODE_MODULES/@babel/plugin-transform-react-jsx/lib/index.js",
+                  Object {
+                    "pragma": "React.createElement",
+                    "pragmaFrag": "React.Fragment",
+                  },
+                ],
+              ],
+            },
+          },
+          Object {
+            "loader": "NODE_MODULES/@storybook/mdx1-csf/loader.js",
+            "options": Object {
+              "remarkPlugins": Array [
+                [Function],
+                [Function],
+              ],
+              "skipCsf": true,
+            },
+          },
+        ],
+      },
+      Object {
+        "enforce": "pre",
+        "loader": "ROOT/lib/source-loader/dist/cjs/index.js",
+        "options": Object {
+          "injectStoryParameters": true,
+          "inspectLocalDependencies": true,
+        },
+        "test": "/\\\\.(stories|story)\\\\.[tj]sx?$/",
+      },
     ],
   },
   "plugins": Array [
@@ -522,8 +512,6 @@ Object {
     "HotModuleReplacementPlugin",
     "CaseSensitivePathsPlugin",
     "ProgressPlugin",
-    "IgnorePlugin",
-    "DocgenPlugin",
     "HtmlWebpackPlugin",
     "InterpolateHtmlPlugin",
     "ModuleNotFoundPlugin",
@@ -533,6 +521,8 @@ Object {
     "IgnorePlugin",
     "ForkTsCheckerWebpackPlugin",
     "ESLintWebpackPlugin",
+    "IgnorePlugin",
+    "DocgenPlugin",
   ],
 }
 `;
