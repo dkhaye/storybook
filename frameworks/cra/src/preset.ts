@@ -1,9 +1,10 @@
 /* eslint-disable no-param-reassign */
 
+import PnpWebpackPlugin from 'pnp-webpack-plugin';
 import { logger } from '@storybook/node-logger';
 import { dirname, join, relative } from 'path';
 import type { PresetProperty, Options } from '@storybook/core-common';
-import type { Configuration, RuleSetRule } from 'webpack';
+import type { Configuration, ResolvePluginInstance, RuleSetRule } from 'webpack';
 import type { FrameworkOptions, StorybookConfig } from './types';
 import { getReactScriptsPath } from './utils/getReactScriptsPath';
 import { testMatch } from './utils/testMatch';
@@ -122,13 +123,21 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
     }),
   ];
 
-  config.plugins = (config.plugins || []).concat(
-    (craWebpackConfig?.plugins || []).filter((p) => !p.constructor.name.includes('DefinePlugin'))
-  );
+  config.plugins = [
+    ...(config.plugins || []),
+    ...(craWebpackConfig?.plugins || []).filter(
+      (p) => !p.constructor.name.includes('DefinePlugin')
+    ),
+  ];
 
   config.resolve = {
     ...config.resolve,
     ...craWebpackConfig?.resolve,
+    plugins: [
+      ...(config.resolve?.plugins || []),
+      ...(craWebpackConfig?.resolve?.plugins || []),
+      PnpWebpackPlugin as unknown as ResolvePluginInstance,
+    ],
   };
 
   config.resolve.alias = {

@@ -1,36 +1,9 @@
-import path from 'path';
+import { join, resolve } from 'path';
 
 import { handlebars, interpolate, normalizeStories, readTemplate } from '@storybook/core-common';
 import { toRequireContextString, toImportFn } from '@storybook/core-webpack';
 import { BuilderOptions } from '../types';
-
-export const getStorybookPaths = (): Record<string, string> => ({
-  global: path.dirname(require.resolve(`global/package.json`)),
-  ...[
-    'addons',
-    'api',
-    'store',
-    'channels',
-    'channel-postmessage',
-    'channel-websocket',
-    'components',
-    'core-events',
-    'router',
-    'theming',
-    'semver',
-    'preview-web',
-    'client-api',
-    'client-logger',
-  ].reduce(
-    (acc, sbPackage) => ({
-      ...acc,
-      [`@storybook/${sbPackage}`]: path.dirname(
-        require.resolve(`@storybook/${sbPackage}/package.json`)
-      ),
-    }),
-    {}
-  ),
-});
+import { getAliasPaths } from './alias';
 
 export async function getModernVirtualEntries({
   workingDir,
@@ -49,7 +22,7 @@ export async function getModernVirtualEntries({
 }) {
   const entries = [...originalEntries];
   const mapping: Record<string, string> = {};
-  const r = (p: string) => path.resolve(path.join(workingDir, p));
+  const r = (p: string) => resolve(join(workingDir, p));
 
   const storiesFileName = 'storybook-stories.js';
   const storiesPath = r(storiesFileName);
@@ -89,8 +62,8 @@ export async function getLegacyVirtualEntries({
 }) {
   const entries = [...originalEntries];
   const mapping: Record<string, string> = {};
-  const r = (p: string) => path.resolve(path.join(workingDir, p));
-  const storybookPaths = getStorybookPaths();
+  const r = (p: string) => resolve(join(workingDir, p));
+  const aliasPaths = getAliasPaths();
 
   const frameworkInitEntry = r('storybook-init-framework-entry.mjs');
   mapping[frameworkInitEntry] = `import '${frameworkName}';`;
@@ -101,8 +74,8 @@ export async function getLegacyVirtualEntries({
   );
 
   configs.forEach((configFilename: any) => {
-    const clientApi = storybookPaths['@storybook/client-api'];
-    const clientLogger = storybookPaths['@storybook/client-logger'];
+    const clientApi = aliasPaths['@storybook/client-api'];
+    const clientLogger = aliasPaths['@storybook/client-logger'];
 
     const data = {
       configFilename,

@@ -53,7 +53,8 @@
     "@storybook/preset-react-webpack": "7.0.0-alpha.13",
     "@storybook/react": "7.0.0-alpha.13",
     "@types/node": "^14.14.20 || ^16.0.0",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.0.1",
+    "pnp-webpack-plugin": "^1.7.0"
   },
   "devDependencies": {
     "@digitak/esrun": "^3.2.2",

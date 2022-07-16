@@ -1,6 +1,11 @@
 declare module '@storybook/semver';
 declare module 'global';
 
+declare module 'pnp-webpack-plugin' {
+  import { ResolvePluginInstance } from 'webpack'; // eslint-disable-line import/no-extraneous-dependencies
+
+  const moduleLoader: (module: NodeModule) => ResolvePluginInstance;
+}
 // TODO: Replace, as soon as @types/react-dom 17.0.14 is used
 // Source: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/fb0f14b7a35cde26ffaa82e7536c062e593e9ae6/types/react-dom/client.d.ts
 declare module 'react-dom/client' {

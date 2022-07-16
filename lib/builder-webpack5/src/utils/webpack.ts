@@ -17,7 +17,8 @@ import {
   getPreviewFile,
 } from '@storybook/core-common';
 import type { BuilderOptions, TypescriptOptions } from '../types';
-import { getLegacyVirtualEntries, getModernVirtualEntries, getStorybookPaths } from './entries';
+import { getLegacyVirtualEntries, getModernVirtualEntries } from './entries';
+import { getAliasPaths } from './alias';
 
 export const createWebpackConfig = async (options: Options): Promise<Configuration> => {
   const {
@@ -242,7 +243,7 @@ export const createWebpackConfig = async (options: Options): Promise<Configurati
       extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json', '.cjs'],
       modules: ['node_modules'].concat((await envs).NODE_PATH || []),
       mainFields: ['browser', 'module', 'main'],
-      alias: getStorybookPaths(),
+      alias: getAliasPaths(),
       fallback: {
         path: require.resolve('path-browserify'),
         assert: require.resolve('browser-assert'),
