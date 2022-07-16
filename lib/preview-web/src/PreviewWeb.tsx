@@ -24,7 +24,6 @@ import { AnyFramework, StoryId, ProjectAnnotations, Args, Globals, ViewMode } fr
 import type {
   ModuleImportFn,
   Selection,
-  Story,
   StorySpecifier,
   StoryIndex,
   PromiseLike,
@@ -135,10 +134,10 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
       return;
     }
 
-    const { storySpecifier, viewMode, args } = this.urlStore.selectionSpecifier;
-    const storyId = this.storyStore.storyIndex.storyIdFromSpecifier(storySpecifier);
+    const { storySpecifier, args } = this.urlStore.selectionSpecifier;
+    const entry = this.storyStore.storyIndex.entryFromSpecifier(storySpecifier);
 
-    if (!storyId) {
+    if (!entry) {
       if (storySpecifier === '*') {
         this.renderStoryLoadingException(
           storySpecifier,
@@ -163,6 +162,7 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
       return;
     }
 
+    const { id: storyId, type: viewMode } = entry;
     this.urlStore.setSelection({ storyId, viewMode });
     this.channel.emit(STORY_SPECIFIED, this.urlStore.selection);
 
@@ -387,33 +387,6 @@ export class PreviewWeb<TFramework extends AnyFramework> extends Preview<TFramew
         this.renderStoryToElement.bind(this)
       );
     }
-  }
-
-  // Used by docs' modernInlineRender to render a story to a given element
-  // Note this short-circuits the `prepare()` phase of the StoryRender,
-  // main to be consistent with the previous behaviour. In the future,
-  // we will change it to go ahead and load the story, which will end up being
-  // "instant", although async.
-  renderStoryToElement(story: Story<TFramework>, element: HTMLElement) {
-    if (!this.renderToDOM)
-      throw new Error(`Cannot call renderStoryToElement before initialization`);
-
-    const render = new StoryRender<TFramework>(
-      this.channel,
-      this.storyStore,
-      this.renderToDOM,
-      this.inlineStoryCallbacks(story.id),
-      story.id,
-      'docs',
-      story
-    );
-    render.renderToElement(element);
-
-    this.storyRenders.push(render);
-
-    return async () => {
-      await this.teardownRender(render);
-    };
   }
 
   async teardownRender(

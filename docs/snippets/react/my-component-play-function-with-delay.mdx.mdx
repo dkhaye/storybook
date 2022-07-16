@@ -9,12 +9,10 @@ import { MyComponent } from './MyComponent';
 
 <Meta title="WithDelay" component={MyComponent} />
 
-export const Template = (args) => <MyComponent {...args} />;
-
 <Story
-  name="DelayedStory"
-  play={async () => {
-    const exampleElement= screen.getByLabelText('example-element');
+name="DelayedStory"
+play={ async () => {
+const exampleElement= screen.getByLabelText('example-element');
 
     // The delay option set the amount of milliseconds between characters being typed
     await userEvent.type(exampleElement, 'random string', {
@@ -25,7 +23,8 @@ export const Template = (args) => <MyComponent {...args} />;
     await userEvent.type(AnotherExampleElement, 'another random string', {
       delay: 100,
     });
-  }}>
-  {Template.bind({})}
+
+}}>
+<MyComponent />
 </Story>
 ```

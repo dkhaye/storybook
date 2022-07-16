@@ -9,20 +9,18 @@ import { MyComponent } from './MyComponent';
 
 <Meta title="WithAsync" component={MyComponent}/>
 
-export const Template = (args) => <MyComponent {...args} />;
-
 <Story
-  name="ExampleAsyncStory"
-  play={async () => {
-    const Input = screen.getByLabelText('Username', {
-      selector: 'input',
-    });
+name="ExampleAsyncStory"
+play={ async () => {
+const Input = screen.getByLabelText('Username', {
+selector: 'input',
+});
 
     await userEvent.type(Input, 'WrongInput', {
       delay: 100,
     });
-    
-    // See https://storybook.js.org/docs/react/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
+
+    // See https://storybook.js.org/docs/7.0/react/essentials/actions#automatically-matching-args to learn how to setup logging in the Actions panel
     const Submit = screen.getByRole('button');
 
     await userEvent.click(Submit);
@@ -30,7 +28,8 @@ export const Template = (args) => <MyComponent {...args} />;
     await waitFor(async () => {
       await userEvent.hover(screen.getByTestId('error'));
     });
-  }}>
-  {Template.bind({})}
+
+}}>
+<MyComponent />
 </Story>
 ```

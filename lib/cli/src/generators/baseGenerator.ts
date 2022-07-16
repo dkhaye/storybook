@@ -110,7 +110,7 @@ const hasInteractiveStories = (framework: SupportedRenderers) =>
 export async function baseGenerator(
   packageManager: JsPackageManager,
   npmOptions: NpmOptions,
-  { language, builder = CoreBuilder.Webpack5, pnp }: GeneratorOptions,
+  { language, builder = CoreBuilder.Webpack5, pnp, commonJs }: GeneratorOptions,
   renderer: SupportedRenderers,
   options: FrameworkOptions = defaultOptions
 ) {
@@ -196,7 +196,7 @@ export async function baseGenerator(
     framework: { name: frameworkInclude, options: options.framework || {} },
     addons: pnp ? addons.map(wrapForPnp) : addons,
     extensions,
-    commonJs: options.commonJs,
+    commonJs,
     ...extraMain,
     ...(type !== 'framework'
       ? {

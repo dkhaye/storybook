@@ -283,6 +283,18 @@ describe('PreviewWeb', () => {
       });
     });
 
+    describe('when the first entry is a docs entry', () => {
+      it('emits the STORY_SPECIFIED event with viewMode=docs', async () => {
+        document.location.search = '?id=*';
+        await createAndRenderPreview();
+
+        expect(mockChannel.emit).toHaveBeenCalledWith(STORY_SPECIFIED, {
+          storyId: 'component-one--docs',
+          viewMode: 'docs',
+        });
+      });
+    });
+
     describe('if the story specified does not exist', () => {
       it('renders a loading error', async () => {
         document.location.search = '?id=random';
@@ -633,9 +645,9 @@ describe('PreviewWeb', () => {
         document.location.search = '?id=component-one--docs&viewMode=docs';
         await createAndRenderPreview();
 
-        const { componentStories } = docsRenderer.render.mock.calls[0][0];
+        const context = docsRenderer.render.mock.calls[0][0];
 
-        expect(componentStories().map((s) => s.id)).toEqual([
+        expect(context.componentStories().map((s) => s.id)).toEqual([
           'component-one--a',
           'component-one--b',
           'component-one--e',

@@ -7,18 +7,15 @@ import { Button } from './Button';
 
 <Meta title="Button" component={Button} />
 
-export const Template = (args) => <Button {...args} />;
-
 <Story
-  name="Primary"
-  args={{}}
-  decorators={[
-    (Story) => (
-      <div style={{ margin: '3em' }}>
-        <Story />
-      </div>
-    ),
-  ]}>
-  {Template.bind({})}
+name="Primary"
+args={{}}
+decorators={[
+(Story) => (
+<div style={{ margin: '3em' }}>
+<Story />
+</div>
+),
+]}>
 </Story>
 ```

@@ -12,15 +12,13 @@ import { MyComponent } from './MyComponent.component';
 <!-- Function to emulate pausing between interactions -->
 
 export const sleep= (ms) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export const Template = (args) => ({ props: args });
-
-<Story 
-  name="ExampleChangeEvent"
-  play={async () => {
-    const select = screen.getByRole('listbox');
+<Story
+name="ExampleChangeEvent"
+play={ async () => {
+const select = screen.getByRole('listbox');
 
     await userEvent.selectOptions(select, ['One Item']);
     await sleep(2000);
@@ -30,7 +28,8 @@ export const Template = (args) => ({ props: args });
 
     await userEvent.selectOptions(select, ['Yet another item']);
 
-  }}>
-  {Template.bind({})}
-</Story>
+}}
+render={(args) => ({
+props: args,
+})} />
 ```
