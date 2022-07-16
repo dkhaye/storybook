@@ -145,5 +145,10 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
     '@storybook/react': dirname(require.resolve(join('@storybook/react', 'package.json'))),
   };
 
+  config.resolveLoader = {
+    modules: ['node_modules', join(scriptsPath, 'node_modules')],
+    plugins: [PnpWebpackPlugin.moduleLoader(module)],
+  };
+
   return config;
 };
