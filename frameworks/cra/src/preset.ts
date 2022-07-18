@@ -138,11 +138,11 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
       ...(craWebpackConfig?.resolve?.plugins || []),
       PnpWebpackPlugin as unknown as ResolvePluginInstance,
     ],
-  };
-
-  config.resolve.alias = {
-    ...config.resolve?.alias,
-    '@storybook/react': dirname(require.resolve(join('@storybook/react', 'package.json'))),
+    alias: {
+      ...config.resolve?.alias,
+      ...craWebpackConfig?.resolve?.alias,
+      '@storybook/react': dirname(require.resolve(join('@storybook/react', 'package.json'))),
+    },
   };
 
   config.resolveLoader = {
@@ -150,7 +150,7 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
     plugins: [PnpWebpackPlugin.moduleLoader(module)],
   };
 
-  console.log({ config });
+  console.dir(config, { depth: Infinity });
 
   return config;
 };
