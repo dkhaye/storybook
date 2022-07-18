@@ -3,7 +3,7 @@ import { join, dirname } from 'path';
 
 import type { Options } from '@storybook/core-common';
 
-export const getReactScriptsPath = async (scriptsPackageName?: string, options?: Options) => {
+export const getCRAPath = async (scriptsPackageName?: string, options?: Options) => {
   const cwd = process.cwd();
 
   if (typeof scriptsPackageName === 'string') {

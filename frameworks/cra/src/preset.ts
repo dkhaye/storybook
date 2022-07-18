@@ -6,19 +6,17 @@ import { dirname, join, relative } from 'path';
 import type { PresetProperty, Options } from '@storybook/core-common';
 import type { Configuration, ResolvePluginInstance, RuleSetRule } from 'webpack';
 import type { FrameworkOptions, StorybookConfig } from './types';
-import { getReactScriptsPath } from './utils/getReactScriptsPath';
+import { getCRAPath } from './utils/getCRAPath';
 import { testMatch } from './utils/testMatch';
 import { checkForIncompatiblePresets } from './utils/compatibility';
+import { filterCRAPlugins, filterStorybookRules } from './utils/webpack';
+import { defaultFrameworkOptions } from './utils/options';
 
 export const addons: PresetProperty<'addons', StorybookConfig> = [
   dirname(require.resolve(join('@storybook/preset-react-webpack', 'package.json'))),
   dirname(require.resolve(join('@storybook/react', 'package.json'))),
   dirname(require.resolve(join('@storybook/builder-webpack5', 'package.json'))),
 ];
-
-const defaultFrameworkOptions: FrameworkOptions = {
-  legacyRootApi: true,
-};
 
 export const frameworkOptions = async (
   _: never,
@@ -72,22 +70,17 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
   const { presets, configDir } = options;
   const frameworkOptions = await presets.apply<FrameworkOptions>('frameworkOptions');
 
-  const scriptsPath = await getReactScriptsPath(frameworkOptions.scriptsPackageName, options);
-  const CWD = process.cwd();
+  const CRAPath = await getCRAPath(frameworkOptions.scriptsPackageName, options);
+  const CWDPath = process.cwd();
+  const CRAConfigPath = join(CRAPath, 'config', 'webpack.config');
 
-  const craWebpackConfigPath = join(scriptsPath, 'config', 'webpack.config');
-  logger.info(`=> Loading Webpack configuration from '${relative(CWD, craWebpackConfigPath)}'`);
+  logger.info(`=> Loading Webpack configuration from '${relative(CWDPath, CRAConfigPath)}'`);
 
   // eslint-disable-next-line import/no-dynamic-require, global-require
-  const craWebpackConfig: Configuration = require(craWebpackConfigPath)(config.mode);
+  const craWebpackConfig: Configuration = require(CRAConfigPath)(config.mode);
 
   config.module.rules = [
-    ...(config.module.rules as unknown as RuleSetRule[]).filter(
-      (r) =>
-        r.layer !== 'storybook_babel' &&
-        r.layer !== 'storybook_css' &&
-        r.layer !== 'storybook_media'
-    ),
+    ...(config.module.rules as unknown as RuleSetRule[]).filter(filterStorybookRules),
     ...((craWebpackConfig?.module?.rules || []) as unknown as RuleSetRule[]).map((r) => {
       if (r.oneOf) {
         return {
@@ -125,9 +118,7 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
 
   config.plugins = [
     ...(config.plugins || []),
-    ...(craWebpackConfig?.plugins || []).filter(
-      (p) => !p.constructor.name.includes('DefinePlugin')
-    ),
+    ...(craWebpackConfig?.plugins || []).filter(filterCRAPlugins),
   ];
 
   config.resolve = {
@@ -146,11 +137,9 @@ export const webpack: StorybookConfig['webpack'] = async (config, options) => {
   };
 
   config.resolveLoader = {
-    modules: ['node_modules', join(scriptsPath, 'node_modules')],
+    modules: ['node_modules', join(CRAPath, 'node_modules')],
     plugins: [PnpWebpackPlugin.moduleLoader(module)],
   };
-
-  console.dir(config, { depth: Infinity });
 
   return config;
 };
