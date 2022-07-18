@@ -1,6 +1,7 @@
 import React from 'react';
 import { DocsContainer } from '@storybook/addon-docs';
 import { themes } from '@storybook/theming';
+import { Channel } from '@storybook/channels';
 import markdown from './markdown.stories.mdx';
 
 export default {
@@ -8,7 +9,11 @@ export default {
   decorators: [
     (storyFn) => (
       <DocsContainer
-        context={{ componentStories: () => [], storyById: () => ({ parameters: {} }) }}
+        context={{
+          channel: new Channel(),
+          componentStories: () => [],
+          storyById: () => ({ parameters: {} }),
+        }}
       >
         {storyFn()}
       </DocsContainer>
@@ -34,7 +39,7 @@ DarkModeDocs.decorators = [
   (storyFn) => (
     <DocsContainer
       context={{
-        type: 'legacy',
+        channel: new Channel(),
         componentStories: () => [],
         storyById: () => ({ parameters: { docs: { theme: themes.dark } } }),
       }}
