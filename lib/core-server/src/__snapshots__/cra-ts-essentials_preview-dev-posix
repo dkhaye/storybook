@@ -23,6 +23,7 @@ Object {
     "experiments",
     "optimization",
     "performance",
+    "resolveLoader",
   ],
   "module": Object {
     "rules": Array [
@@ -512,12 +513,9 @@ Object {
     "HotModuleReplacementPlugin",
     "CaseSensitivePathsPlugin",
     "ProgressPlugin",
-    "HtmlWebpackPlugin",
-    "InterpolateHtmlPlugin",
     "ModuleNotFoundPlugin",
     "ReactRefreshPlugin",
     "CaseSensitivePathsPlugin",
-    "WebpackManifestPlugin",
     "IgnorePlugin",
     "ForkTsCheckerWebpackPlugin",
     "ESLintWebpackPlugin",

@@ -22,6 +22,7 @@ Object {
     "experiments",
     "optimization",
     "performance",
+    "resolveLoader",
   ],
   "module": Object {
     "rules": Array [
@@ -520,12 +521,8 @@ Object {
     "ProvidePlugin",
     "CaseSensitivePathsPlugin",
     "ProgressPlugin",
-    "HtmlWebpackPlugin",
-    "InlineChunkHtmlPlugin",
-    "InterpolateHtmlPlugin",
     "ModuleNotFoundPlugin",
     "MiniCssExtractPlugin",
-    "WebpackManifestPlugin",
     "IgnorePlugin",
     "ForkTsCheckerWebpackPlugin",
     "ESLintWebpackPlugin",
